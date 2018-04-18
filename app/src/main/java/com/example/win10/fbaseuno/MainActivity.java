@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -15,85 +16,100 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity{
 
+    private static final String TAG = "Hollow";
     Button btnLog,btnAccess;
     EditText txtemail,txtpass;
+    FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnAccess=(Button)findViewById(R.id.btnAccess);
-        btnLog=(Button)findViewById(R.id.btnLog);
-        txtemail=(EditText)findViewById(R.id.txtEmail);
-        txtpass=(EditText)findViewById(R.id.txtPassword);
+        btnAccess = (Button) findViewById(R.id.btnAccess);
+        btnLog = (Button) findViewById(R.id.btnLog);
+        txtemail = (EditText) findViewById(R.id.txtEmail);
+        txtpass = (EditText) findViewById(R.id.txtPassword);
 
-        btnLog.setOnClickListener(this);
-        btnAccess.setOnClickListener(this);
+        //btnLog.setOnClickListener(this);
+        btnAccess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                accessUser();
+            }
+        });
 
+        btnLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                regUser();
+            }
+        });
+
+        mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if(user != null){
-                    Log.i("SESION","Sesion Iniciada con email: " + user.getEmail());
+                if(firebaseAuth.getCurrentUser() != null) {
+                    startActivity(new Intent(MainActivity.this, RecyclerActivity.class));
                 }else{
-                    Log.i("SESION","Sesion Cerrada");
+                    //Toast.makeText(MainActivity.this,"Datos incorrectos",Toast.LENGTH_SHORT).show();
                 }
             }
         };
     }
 
-    private void registrar(String email,String pass){
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    Log.i("SESION","Usuario Creado Correctamente");
-                }else {
-                    Log.i("SESION",task.getException().getMessage()+"");
-                }
-            }
-        });
-
-    }
-
-    private void acceder(String email,String pass){
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,pass);
-
-    }
-
     @Override
-    public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.btnAccess:
-                String emailInit=txtemail.getText().toString();
-                String passInit=txtpass.getText().toString();
-                acceder(emailInit,passInit);
-                Intent intent = new Intent(getApplicationContext(), RecyclerActivity.class);//Aqui
-                startActivity(intent);
-                finish();
-                break;
-            case R.id.btnLog:
-                String emailReg=txtemail.getText().toString();
-                String passReg=txtpass.getText().toString();
-                registrar(emailReg,passReg);
-                break;
-        }
-    }
-
-    @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
-        FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
+        // Check if user is signed in (non-null) and update UI accordingly.
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(mAuthListener != null){
-            FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
-        }
+    private void accessUser(){
+        String email = txtemail.getText().toString();
+        String password = txtpass.getText().toString();
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+    private void regUser(){
+        String email = txtemail.getText().toString();
+        String password = txtpass.getText().toString();
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
     }
 }

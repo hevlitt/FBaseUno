@@ -8,6 +8,9 @@ public class Alumno {
         this.nControl = nControl;
     }
 
+    public Alumno() {
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -17,7 +20,6 @@ public class Alumno {
     }
 
     public String getnControl() {
-
         return nControl;
     }
 

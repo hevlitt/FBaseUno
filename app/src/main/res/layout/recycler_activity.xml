@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteY="81dp">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
@@ -13,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnIns" />
+        app:layout_constraintTop_toBottomOf="@+id/btnOut" />
 
     <EditText
         android:id="@+id/txtname"
@@ -33,24 +34,38 @@
         android:id="@+id/btnIns"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="58dp"
+        android:layout_marginBottom="45dp"
+        android:background="#509492"
         android:onClick="onClickAddAlumno"
         android:text="Insertar Alumno"
         app:layout_constraintBottom_toTopOf="@+id/recycler"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtnctrl" />
+        app:layout_constraintStart_toEndOf="@+id/btnOut" />
 
     <EditText
         android:id="@+id/txtnctrl"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="44dp"
+        android:layout_marginBottom="56dp"
         android:ems="10"
         android:hint="No. Control"
         android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@+id/btnIns"
+        app:layout_constraintBottom_toTopOf="@+id/btnOut"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtname" />
+
+    <Button
+        android:id="@+id/btnOut"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="45dp"
+        android:layout_marginEnd="132dp"
+        android:layout_marginRight="132dp"
+        android:background="#509492"
+        android:text="Salir"
+        app:layout_constraintBottom_toTopOf="@+id/recycler"
+        app:layout_constraintEnd_toStartOf="@+id/btnIns"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtnctrl" />
 </android.support.constraint.ConstraintLayout>
